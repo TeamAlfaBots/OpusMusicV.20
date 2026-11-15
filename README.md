@@ -2,7 +2,7 @@
 
 <img src="https://files.catbox.moe/wsvpyf.svg" width="720" height="auto" alt="OpusMusic Banner"/>
 
-<h2>OpusMusic</h2>
+<h2>𝐎𝐩𝐮𝐬𝐌𝐮𝐬𝐢𝐜 𝐕2.0</h2>
 
 <b>Telegram Group Calls Streaming Bot</b><br>
 Supports YouTube, Spotify, Resso, Apple Music, SoundCloud and M3U8 links.
