@@ -17,7 +17,7 @@ class Config:
         self.DURATION_LIMIT = int(getenv("DURATION_LIMIT", 60)) * 60
         self.QUEUE_LIMIT = int(getenv("QUEUE_LIMIT", 20))
         self.PLAYLIST_LIMIT = int(getenv("PLAYLIST_LIMIT", 20))
-        self.STICKER_ID = getenv("STICKER_ID", "")
+        self.STICKER_ID = getenv("STICKER_ID", "CAACAgEAAxkBAAEgP2NqTxzvHmExFQoQgMKgpgMOuWjqDAACYwUAAtXZYEXWX3FvXNx8kzwE")
         self.SESSION1 = getenv("SESSION", None)
         self.SESSION2 = getenv("SESSION2", None)
         self.SESSION3 = getenv("SESSION3", None)
