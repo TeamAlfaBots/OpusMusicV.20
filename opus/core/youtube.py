@@ -182,7 +182,10 @@ class YouTube:
             async with aiohttp.ClientSession() as session:
                 for i, url in enumerate(urls):
                     path = f"{self.cookie_dir}/cookie_{i}.txt"
-                    link = "https://batbin.me/raw/" + url.rstrip("/").split("/")[-1]
+                    if "batbin.me" in url:
+                        link = "https://batbin.me/raw/" + url.rstrip("/").split("/")[-1]
+                    else:
+                        link = url  # catbox / koi bhi direct raw .txt link
                     try:
                         async with session.get(
                             link, timeout=aiohttp.ClientTimeout(total=20)
@@ -504,3 +507,4 @@ class YouTube:
             await self.cache.save(video_id, filepath, ext, video)
         except Exception as e:
             logger.warning(f"[TursoCache] Background save error: {e}")
+                        
