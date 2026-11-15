@@ -35,19 +35,14 @@ class Config:
 
         self.COOKIES_URL = [
             url for url in getenv("COOKIES_URL", "").split(" ")
-            if url and "batbin.me" in url
+            if url.startswith("http")
         ]
         self.DEFAULT_THUMB = getenv("DEFAULT_THUMB", "https://te.legra.ph/file/3e40a408286d4eda24191.jpg")
         self.PING_IMG = getenv("PING_IMG", "https://files.catbox.moe/ynwsxi.png")
         self.START_IMG = getenv("START_IMG", "").split()
         self.START_VIDEO = getenv("START_VIDEO", "").split()
 
-        # Turso cache DBs — song bytes yahan cache hote hain taaki
-        # download API ka daily limit baar baar hit na ho. Har DB ka
-        # URL + token alag env var mein: TURSO_URL_1/TURSO_TOKEN_1,
-        # TURSO_URL_2/TURSO_TOKEN_2. Jitni bhi pairs milen (donon
-        # values set hon) utni hi list mein aayengi — koi pair
-        # missing/empty ho to bas skip ho jayega.
+        # Turso cache DBs —
         self.TURSO_DATABASES = [
             {"url": url, "token": token}
             for url, token in (
@@ -65,4 +60,4 @@ class Config:
         ]
         if missing:
             raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
-            
+
