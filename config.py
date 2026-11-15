@@ -32,7 +32,8 @@ class Config:
         self.VIDEO_PLAY: bool = getenv("VIDEO_PLAY", "True").lower() == "true"
 
         self.LANG_CODE = getenv("LANG_CODE", "en")
-
+        
+        # catbox.me
         self.COOKIES_URL = [
             url for url in getenv("COOKIES_URL", "").split(" ")
             if url.startswith("http")
