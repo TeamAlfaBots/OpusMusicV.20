@@ -32,11 +32,11 @@ def _request_buttons(chat_id: int, user_id: int) -> types.InlineKeyboardMarkup:
     return types.InlineKeyboardMarkup([
         [
             types.InlineKeyboardButton(
-                text="✅ ᴀᴄᴄᴇᴘᴛ", callback_data=f"jreq accept {chat_id} {user_id}",
+                text="✅ 𝐀𝖼𝖼𝖾𝗉𝗍", callback_data=f"jreq accept {chat_id} {user_id}",
                 style=enums.ButtonStyle.SUCCESS,
             ),
             types.InlineKeyboardButton(
-                text="❌ ʀᴇᴊᴇᴄᴛ", callback_data=f"jreq reject {chat_id} {user_id}",
+                text="❌ 𝐑𝖾𝗃𝖾𝖼𝗍", callback_data=f"jreq reject {chat_id} {user_id}",
                 style=enums.ButtonStyle.DANGER,
             ),
         ],
@@ -47,7 +47,7 @@ def _joinrequest_buttons() -> types.InlineKeyboardMarkup:
     rows = [
         [
             types.InlineKeyboardButton(
-                text="➕ ᴀᴅᴅ ᴍᴇ",
+                text="➕ 𝐀𝖽𝖽 𝐌𝖾",
                 url=f"https://t.me/{app.username}?startgroup=true",
                 style=enums.ButtonStyle.SUCCESS,
             )
@@ -62,7 +62,7 @@ def _joinrequest_buttons() -> types.InlineKeyboardMarkup:
     if config.SURPRISE_URL:
         rows.append([
             types.InlineKeyboardButton(
-                text="🎁 ᴛᴀᴘ ᴛᴏ ᴄʟᴀɪᴍ ʏᴏᴜʀ ꜱᴜʀᴘʀɪꜱᴇ", url=config.SURPRISE_URL,
+                text="🎁 𝐓𝖺𝗉 𝐓𝗈 𝐂𝗅𝖺𝗂𝗆 𝐘𝗈𝗎𝗋 𝐘𝗈𝗎𝗋 𝐒𝖾𝗋𝗉𝗋𝗂𝗌𝖾", url=config.SURPRISE_URL,
                 style=enums.ButtonStyle.SUCCESS,
             )
         ])
