@@ -59,13 +59,14 @@ def _joinrequest_buttons() -> types.InlineKeyboardMarkup:
                                        style=enums.ButtonStyle.DANGER),
         ],
     ]
-    if config.SURPRISE_URL:
-        rows.append([
-            types.InlineKeyboardButton(
-                text="🎁 ᴛᴀᴘ ᴛᴏ ᴄʟᴀɪᴍ ʏᴏᴜʀ ꜱᴜʀᴘʀɪꜱᴇ", url=config.SURPRISE_URL,
-                style=enums.ButtonStyle.SUCCESS,
-            )
-        ])
+    # Surprise button: bot ka /start chalata hai (alag link nahi chahiye)
+    rows.append([
+        types.InlineKeyboardButton(
+            text="🎁 ᴛᴀᴘ ᴛᴏ ᴄʟᴀɪᴍ ʏᴏᴜʀ ꜱᴜʀᴘʀɪꜱᴇ",
+            url=f"https://t.me/{app.username}?start=claim",
+            style=enums.ButtonStyle.SUCCESS,
+        )
+    ])
     return types.InlineKeyboardMarkup(rows)
 
 
