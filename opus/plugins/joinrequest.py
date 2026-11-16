@@ -99,22 +99,39 @@ async def _fetch_img(url: str):
     return bio
 
 
+async def _send_rich_request(target_id, photo, title, body_lines, markup):
+    """Rich message: photo -> bada heading -> expandable note -> rich buttons."""
+    if not (rich.RICH_OK and rich.START_ENABLED):
+        return None
+    blocks = []
+    if photo:
+        blocks.append(types.InputRichBlockPhoto(photo=types.InputMediaPhoto(photo)))
+    blocks.append(rich._heading(title))
+    blocks += rich._quote_blocks("\n".join(body_lines), True)  # True = expandable
+    blocks += rich._markup_blocks(markup, False)
+    return await rich._send(target_id, blocks)
+
+
 async def _send_welcome_inner(target_id: int, first_name: str, chat_title: str):
     name = html.escape(first_name or "ᴜꜱᴇʀ")
     title = html.escape(chat_title)
-    text = (
-        f"<blockquote>💐 ʜᴇʏ {name} 👋</blockquote>\n"
-        f"<blockquote>🏵 ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ʀᴇǫᴜᴇꜱᴛɪɴɢ <b>{title}</b>\n\n"
-        f"ɪ'ᴍ {html.escape(app.name)} - ᴀ ʜɪɢʜ ǫᴜᴀʟɪᴛʏ ᴍᴜꜱɪᴄ ꜱᴛʀᴇᴀᴍɪɴɢ ʙᴏᴛ "
-        f"ꜰᴏʀ ᴛᴇʟᴇɢʀᴀᴍ ɢʀᴏᴜᴘꜱ & ᴄʜᴀɴɴᴇʟꜱ 🚀\n\n"
-        f"ᴊᴜꜱᴛ ꜱᴇɴᴅ /start ᴛᴏ ꜱᴇᴇ ʙᴏᴛ ᴍᴇɴᴜ ᴀɴᴅ ᴄᴏᴍᴍᴀɴᴅꜱ 📋</blockquote>"
-    )
+    heading = f"💐 ʜᴇʏ {first_name or 'ᴜꜱᴇʀ'} 👋"
+    gap = "⠀"  # khali line (blank lines rich quote me hat jaati hain)
+    # Poora note bold (ek line = ek <b>, nesting nahi)
+    body_lines = [
+        f"<b>🏵 ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ʀᴇǫᴜᴇꜱᴛɪɴɢ {title}</b>",
+        gap,
+        f"<b>ɪ'ᴍ {html.escape(app.name)} - ᴀ ʜɪɢʜ ǫᴜᴀʟɪᴛʏ ᴍᴜꜱɪᴄ ꜱᴛʀᴇᴀᴍɪɴɢ ʙᴏᴛ "
+        f"ꜰᴏʀ ᴛᴇʟᴇɢʀᴀᴍ ɢʀᴏᴜᴘꜱ &amp; ᴄʜᴀɴɴᴇʟꜱ 🚀</b>",
+        gap,
+        "<b>ᴊᴜꜱᴛ ꜱᴇɴᴅ /start ᴛᴏ ꜱᴇᴇ ʙᴏᴛ ᴍᴇɴᴜ ᴀɴᴅ ᴄᴏᴍᴍᴀɴᴅꜱ 📋</b>",
+    ]
+    # Classic (rich na chale to): heading bold + expandable quote
+    text = f"<b>{html.escape(heading)}</b>\n\n<blockquote expandable>" + "\n".join(body_lines) + "</blockquote>"
     markup = _joinrequest_buttons()
     img = RQ_IMG_URL.strip() or get_start_img()
 
-    # 1) Rich message (start msg jaisa: photo + quote + rich buttons)
-    #    pehle URL se, phir bot ke khud download kiye photo se, phir bina photo ke
-    #    (buttons rich hi rehte hain)
+    # 1) Rich message (start msg jaisa). Photo: URL -> bot ka download kiya -> bina photo
     for attempt in range(3):
         try:
             if attempt == 0:
@@ -127,7 +144,7 @@ async def _send_welcome_inner(target_id: int, first_name: str, chat_title: str):
                     continue
             else:
                 photo = None
-            if await rich.send_menu(target_id, photo, text, markup):
+            if await _send_rich_request(target_id, photo, heading, body_lines, markup):
                 return f"rich (try {attempt + 1})"
         except Exception as e:
             logger.warning("[JoinReq] rich menu fail (try %s): %r", attempt + 1, e)
