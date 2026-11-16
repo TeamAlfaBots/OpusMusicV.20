@@ -18,7 +18,7 @@ from opus.plugins.start import get_start_img
 # JOIN REQUEST wale message ki photo yahan hard-code karo.
 # Seedha image link (.jpg / .png) yahan paste karo, jaise catbox ka link.
 # Khali chhoda to START_IMG use hogi.
-RQ_IMG_URL = ""
+RQ_IMG_URL = "https://files.catbox.moe/payr5b.png"
 # ══════════════════════════════════════════════════════════════
 
 _pending: dict[str, dict] = {}
