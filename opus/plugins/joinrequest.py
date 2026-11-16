@@ -32,11 +32,11 @@ def _request_buttons(chat_id: int, user_id: int) -> types.InlineKeyboardMarkup:
     return types.InlineKeyboardMarkup([
         [
             types.InlineKeyboardButton(
-                text="✅ 𝐀𝖼𝖼𝖾𝗉𝗍", callback_data=f"jreq accept {chat_id} {user_id}",
+                text="✅ ᴀᴄᴄᴇᴘᴛ", callback_data=f"jreq accept {chat_id} {user_id}",
                 style=enums.ButtonStyle.SUCCESS,
             ),
             types.InlineKeyboardButton(
-                text="❌ 𝐑𝖾𝗃𝖾𝖼𝗍", callback_data=f"jreq reject {chat_id} {user_id}",
+                text="❌ ʀᴇᴊᴇᴄᴛ", callback_data=f"jreq reject {chat_id} {user_id}",
                 style=enums.ButtonStyle.DANGER,
             ),
         ],
@@ -47,7 +47,7 @@ def _joinrequest_buttons() -> types.InlineKeyboardMarkup:
     rows = [
         [
             types.InlineKeyboardButton(
-                text="➕ 𝐀𝖽𝖽 𝐌𝖾",
+                text="➕ ᴀᴅᴅ ᴍᴇ",
                 url=f"https://t.me/{app.username}?startgroup=true",
                 style=enums.ButtonStyle.SUCCESS,
             )
@@ -62,7 +62,7 @@ def _joinrequest_buttons() -> types.InlineKeyboardMarkup:
     if config.SURPRISE_URL:
         rows.append([
             types.InlineKeyboardButton(
-                text="🎁 𝐓𝖺𝗉 𝐓𝗈 𝐂𝗅𝖺𝗂𝗆 𝐘𝗈𝗎𝗋 𝐘𝗈𝗎𝗋 𝐒𝖾𝗋𝗉𝗋𝗂𝗌𝖾", url=config.SURPRISE_URL,
+                text="🎁 ᴛᴀᴘ ᴛᴏ ᴄʟᴀɪᴍ ʏᴏᴜʀ ꜱᴜʀᴘʀɪꜱᴇ", url=config.SURPRISE_URL,
                 style=enums.ButtonStyle.SUCCESS,
             )
         ])
@@ -98,7 +98,7 @@ async def _fetch_img(url: str):
     return bio
 
 
-async def _send_welcome(target_id: int, first_name: str, chat_title: str) -> None:
+async def _send_welcome_inner(target_id: int, first_name: str, chat_title: str):
     name = html.escape(first_name or "ᴜꜱᴇʀ")
     title = html.escape(chat_title)
     text = (
@@ -127,7 +127,7 @@ async def _send_welcome(target_id: int, first_name: str, chat_title: str) -> Non
             else:
                 photo = None
             if await rich.send_menu(target_id, photo, text, markup):
-                return
+                return f"rich (try {attempt + 1})"
         except Exception as e:
             logger.warning("[JoinReq] rich menu fail (try %s): %r", attempt + 1, e)
 
@@ -135,22 +135,36 @@ async def _send_welcome(target_id: int, first_name: str, chat_title: str) -> Non
     if img:
         try:
             await app.send_photo(target_id, img, caption=text, reply_markup=markup)
-            return
+            return "photo(url)"
         except Exception as e:
             logger.warning("[JoinReq] photo(url) fail: %r", e)
         data = await _fetch_img(img)
         if data:
             try:
                 await app.send_photo(target_id, data, caption=text, reply_markup=markup)
-                return
+                return "photo(file)"
             except Exception as e:
                 logger.warning("[JoinReq] photo(file) fail: %r", e)
 
     # 3) sirf text
     try:
         await app.send_message(target_id, text, reply_markup=markup)
+        return "text"
     except Exception as e:
-        logger.warning("[JoinReq] welcome DM fail (%s): %r", target_id, e)
+        logger.warning("[JoinReq] text DM fail (%s): %r", target_id, e)
+    return None
+
+
+async def _send_welcome(target_id: int, first_name: str, chat_title: str) -> None:
+    try:
+        how = await _send_welcome_inner(target_id, first_name, chat_title)
+    except Exception as e:
+        logger.warning("[JoinReq] DM error (%s): %r", target_id, e)
+        return
+    if how:
+        logger.info("[JoinReq] DM sent to %s via %s", target_id, how)
+    else:
+        logger.warning("[JoinReq] DM NOT sent to %s (sab tareeke fail)", target_id)
 
 
 # -- Naya join request aane par -> sabhi owners ko DM -------------------------
@@ -163,6 +177,7 @@ async def joinrequest_notify_owner(_, request: types.ChatJoinRequest):
             return
 
         chat = request.chat
+        logger.info("[JoinReq] request: user=%s chat=%s", user.id, chat.id)
         chat_title = chat.title or "ɢʀᴏᴜᴘ"
         full_name = f"{user.first_name or ''} {user.last_name or ''}".strip()
         username = f"@{user.username}" if user.username else "ɴᴏɴᴇ"
@@ -203,8 +218,8 @@ async def joinrequest_notify_owner(_, request: types.ChatJoinRequest):
                 # Owner ne bot ko start nahi kiya ya DM band hai - skip.
                 continue
 
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("[JoinReq] handler error: %r", e)
 
 
 # -- Owner ke Approve/Reject dabane par ---------------------------------------
