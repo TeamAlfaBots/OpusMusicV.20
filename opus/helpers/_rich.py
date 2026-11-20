@@ -98,9 +98,9 @@ def _inline(segment: str):
 _BQ_BLOCK_RE = re.compile(r"<blockquote\b([^>]*)>(.*?)</blockquote>", re.IGNORECASE | re.DOTALL)
 _QUOTE_ERRORS = (errors.BadRequest, TypeError, ValueError, AttributeError)
 # footer line under the player ("Made By <link>")
-CREDIT_PREFIX = "𝐌𝐚𝐝𝐞 𝐛𝐲 "
-CREDIT_TEXT = "𝐀𝐥𝐟𝐚𝐁𝐨𝐭𝐬"
-CREDIT_URL = "https://t.me/Uffsexyboi"
+CREDIT_PREFIX = "𝘖𝘸𝘯𝘦𝘳 "
+CREDIT_TEXT = "🦋 ᥴ˫꧊𖾔៵𝆭៵𝆭ꭚ🍒"
+CREDIT_URL = "https://t.me/ll_cherruu"
 _TG = {"ok": True}  # tg://user?id= links clickable (auto-off if rejected)
 _QUOTE = {"ok": os.getenv("RICH_QUOTE", "1") != "0"}  # RICH_QUOTE=0 -> no quote boxes
 
